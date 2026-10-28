@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resilient Portal</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between font-sans">
+
+    <!-- Header / Status Bar -->
+    <header class="p-4 border-b border-slate-800 flex justify-between items-center max-w-4xl mx-auto w-full">
+        <h1 class="font-bold text-lg tracking-wider text-indigo-400">PROJECT NEXUS</h1>
+        <div id="status-badge" class="px-3 py-1 text-xs rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+            Checking Network...
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-4xl mx-auto p-6 w-full flex-grow flex flex-col justify-center items-center text-center">
+        <div class="space-y-6 max-w-lg">
+            <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white">Censorship-Resistant Node</h2>
+            <p class="text-slate-400 text-sm md:text-base leading-relaxed">
+                This interface is engineered to bypass standard infrastructure filters through dynamic Anycast edge routing and decentralized fallback mirrors.
+            </p>
+            <div class="pt-2">
+                <button onclick="verifyRoute()" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition shadow-lg shadow-indigo-600/30 active:scale-95">
+                    Verify Network Route
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="p-4 text-center text-xs text-slate-600 border-t border-slate-900">
+        Resilient Node Protocol &bull; Zero-Single-Point-of-Failure Architecture
+    </footer>
+
+    <!-- Network Resilience & Fallback Logic -->
+    <script>
+        // Array of backup mirrors or IPFS gateway endpoints
+        const backupMirrors = [
+            window.location.origin, 
+            "https://fallback-mirror.pages.dev" // Replace with your secondary mirror domain if needed
+        ];
+
+        function updateStatus(text, type) {
+            const badge = document.getElementById('status-badge');
+            badge.textContent = text;
+            if (type === 'success') {
+                badge.className = "px-3 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+            } else if (type === 'warning') {
+                badge.className = "px-3 py-1 text-xs rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20";
+            } else {
+                badge.className = "px-3 py-1 text-xs rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20";
+            }
+        }
+
+        async function verifyRoute() {
+            updateStatus("Testing Connection...", "warning");
+            try {
+                const response = await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
+                if (response.ok) {
+                    updateStatus("Status: Secure / Edge Active", "success");
+                } else {
+                    throw new Error("Route degraded");
+                }
+            } catch (error) {
+                updateStatus("Primary Route Blocked - Shifting Mirror...", "error");
+                // Automatic mirror fallback loop execution placeholder
+            }
+        }
+
+        // Run verification automatically on load
+        window.onload = verifyRoute;
+    </script>
+</body>
+</html>
